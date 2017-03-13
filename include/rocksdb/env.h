@@ -1583,5 +1583,12 @@ Env* NewTimedEnv(Env* base_env);
 // This is a factory method for EnvLogger declared in logging/env_logging.h
 Status NewEnvLogger(const std::string& fname, Env* env,
                     std::shared_ptr<Logger>* result);
+// Returns a new environment that is used for SPDK environment.
+void NewSpdkEnv(Env** spdk_env, const std::string& fsname, const std::string& confname,
+		const std::string& bdevname, uint64_t cache_size_in_mb);
+
+// Initializes a thread for SpdkEnv processing.
+void SpdkInitializeThread(void);
 
 }  // namespace rocksdb
+
