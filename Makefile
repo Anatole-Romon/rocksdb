@@ -233,6 +233,18 @@ AM_SHARE = $(AM_V_CCLD) $(CXX) $(PLATFORM_SHARED_LDFLAGS)$@ -L. $(patsubst lib%.
 
 include $(SPDK_ROOT_DIR)/lib/rocksdb/spdk.rocksdb.mk
 
+# This inclusion adds flags which break things. They need to be removed
+#
+# A -DNDEBUG flag is added to CXXFLAGS. We have to remove it if debug is on
+# A -Wstrict-prototypes is added to CFLAGS, which some of the C code does not respect
+
+ifneq ($(DEBUG_LEVEL),0)
+$(warning Debug enabled)
+CXXFLAGS := $(filter-out -DNDEBUG, $(CXXFLAGS))
+endif
+
+CFLAGS := $(filter-out -Wstrict-prototypes, $(CFLAGS))
+
 # Detect what platform we're building on.
 # Export some common variables that might have been passed as Make variables
 # instead of environment variables.
