@@ -1,3 +1,8 @@
+# Head-Rocksdb
+
+Meant to be run as a fragment of rocksDB, with one or many Body-RocksDB instances alongside.
+
+
 ## RocksDB: A Persistent Key-Value Store for Flash and RAM Storage
 
 [![CircleCI Status](https://circleci.com/gh/facebook/rocksdb.svg?style=svg)](https://circleci.com/gh/facebook/rocksdb)
