@@ -29,7 +29,7 @@ LIB_SOURCES =                                                   \
   db/db_info_dumper.cc                                          \
   db/db_iter.cc                                                 \
   db/dbformat.cc                                                \
-  db/error_handler.cc						\
+  db/error_handler.cc						                                \
   db/event_helpers.cc                                           \
   db/experimental.cc                                            \
   db/external_sst_file_ingestion_job.cc                         \
@@ -67,6 +67,7 @@ LIB_SOURCES =                                                   \
   env/env_chroot.cc                                             \
   env/env_encryption.cc                                         \
   env/env_hdfs.cc                                               \
+  $(SPDK_ROOT_DIR)/lib/rocksdb/env_spdk.cc                      \
   env/env_posix.cc                                              \
   env/io_posix.cc                                               \
   env/mock_env.cc                                               \
@@ -166,14 +167,6 @@ LIB_SOURCES =                                                   \
   util/concurrent_task_limiter_impl.cc                          \
   util/crc32c.cc                                                \
   util/dynamic_bloom.cc                                         \
-  util/env.cc                                                   \
-  util/env_chroot.cc                                            \
-  util/env_hdfs.cc                                              \
-  $(SPDK_ROOT_DIR)/lib/rocksdb/env_spdk.cc                      \
-  util/event_logger.cc                                          \
-  util/file_util.cc                                             \
-  util/file_reader_writer.cc                                    \
-  util/filter_policy.cc                                         \
   util/hash.cc                                                  \
   util/murmurhash.cc                                            \
   util/random.cc                                                \
@@ -375,6 +368,7 @@ MAIN_SOURCES =                                                          \
   env/env_basic_test.cc                                                 \
   env/env_test.cc                                                       \
   env/mock_env_test.cc                                                  \
+  $(SPDK_ROOT_DIR)/lib/rocksdb/env_spdk.cc                              \
   logging/auto_roll_logger_test.cc                                      \
   logging/env_logger_test.cc                                            \
   logging/event_logger_test.cc                                          \

@@ -168,10 +168,10 @@ endif
 $(warning Warning: Compiling in debug mode. Don't use the resulting binary in production)
 endif
 
-#-----------------------------------------------
 SPDK_DIR ?= ../spdk
 SPDK_ROOT_DIR := $(abspath $(SPDK_DIR))
 
+#-----------------------------------------------
 include src.mk
 
 AM_DEFAULT_VERBOSITY = 0
@@ -200,15 +200,28 @@ am__v_AR_ = $(am__v_AR_$(AM_DEFAULT_VERBOSITY))
 am__v_AR_0 = @echo "  AR      " $@;
 am__v_AR_1 =
 
+ifdef ROCKSDB_USE_LIBRADOS
+LIB_SOURCES += utilities/env_librados.cc
+LDFLAGS += -lrados
+endif
+
 AM_LINK += $(AM_V_CCLD)$(CXX)
 AM_LINK += $^ $(EXEC_LDFLAGS) -o $@ $(LDFLAGS) $(COVERAGEFLAGS) -ldl
 
 include $(SPDK_ROOT_DIR)/lib/rocksdb/spdk.rocksdb.mk
 
-ifdef ROCKSDB_USE_LIBRADOS
-LIB_SOURCES += utilities/env_librados.cc
-LDFLAGS += -lrados
+# This inclusion adds flags which break things. They need to be removed
+#
+# A -DNDEBUG flag is added to CXXFLAGS. We have to remove it if debug is on
+# A -Wstrict-prototypes is added to CFLAGS, which some of the C code does not respect
+
+ifneq ($(DEBUG_LEVEL),0)
+$(warning Debug enabled)
+CXXFLAGS := $(filter-out -DNDEBUG, $(CXXFLAGS))
 endif
+
+CFLAGS := $(filter-out -Wstrict-prototypes, $(CFLAGS))
+
 
 # detect what platform we're building on
 dummy := $(shell (export ROCKSDB_ROOT="$(CURDIR)"; export PORTABLE="$(PORTABLE)"; "$(CURDIR)/build_tools/build_detect_platform" "$(CURDIR)/make_config.mk"))
@@ -442,7 +455,7 @@ VALGRIND_VER := $(join $(VALGRIND_VER),valgrind)
 
 VALGRIND_OPTS = --error-exitcode=$(VALGRIND_ERROR) --leak-check=full
 
-BENCHTOOLOBJECTS = $(BENCH_LIB_SOURCES:.cc=.o) $(LIBOBJECTS) $(TESTUTIL) $(SPDK_LIB_FILES)
+BENCHTOOLOBJECTS = $(BENCH_LIB_SOURCES:.cc=.o) $(LIBOBJECTS) $(TESTUTIL)
 
 ANALYZETOOLOBJECTS = $(ANALYZER_LIB_SOURCES:.cc=.o)
 
@@ -1116,6 +1129,7 @@ clean-not-downloaded: clean-ext-libraries-bin clean-rocks
 
 clean-rocks:
 	rm -f $(BENCHMARKS) $(TOOLS) $(TESTS) $(PARALLEL_TEST) $(LIBRARY) $(SHARED)
+	rm -f $(SPDK_ROOT_DIR)/lib/rocksdb/*.o $(SPDK_ROOT_DIR)/lib/rocksdb/*.cc.d 
 	rm -rf $(CLEAN_FILES) ios-x86 ios-arm scan_build_report
 	$(FIND) . -name "*.[oda]" -exec rm -f {} \;
 	$(FIND) . -type f -regex ".*\.\(\(gcda\)\|\(gcno\)\)" -exec rm {} \;
