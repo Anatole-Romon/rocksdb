@@ -168,7 +168,7 @@ endif
 $(warning Warning: Compiling in debug mode. Don't use the resulting binary in production)
 endif
 
-SPDK_DIR ?= ../spdk
+SPDK_DIR ?= ../spdk-custom
 SPDK_ROOT_DIR := $(abspath $(SPDK_DIR))
 
 #-----------------------------------------------
