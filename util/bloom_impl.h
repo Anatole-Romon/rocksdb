@@ -7,6 +7,8 @@
 // RocksDB. (DynamicBloom is in a separate file for now because it
 // supports concurrent write.)
 
+// #undef HAVE_AVX2
+
 #pragma once
 #include <stddef.h>
 #include <stdint.h>

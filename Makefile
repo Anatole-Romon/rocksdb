@@ -482,8 +482,17 @@ ifeq ($(NO_THREEWAY_CRC32C), 1)
 	CXXFLAGS += -DNO_THREEWAY_CRC32C
 endif
 
+$(warning ========================= C Flags before are $(CFLAGS) ======================================== )
+$(warning ========================= CXX Flags before are $(CXXFLAGS) ======================================== )
+
 CFLAGS += $(C_WARNING_FLAGS) $(WARNING_FLAGS) -I. -I./include $(PLATFORM_CCFLAGS) $(OPT)
-CXXFLAGS += $(WARNING_FLAGS) -I. -I./include $(PLATFORM_CXXFLAGS) $(OPT) -Woverloaded-virtual -Wnon-virtual-dtor -Wno-missing-field-initializers
+override CXXFLAGS += $(WARNING_FLAGS) -I. -I./include $(PLATFORM_CXXFLAGS) $(OPT) -Woverloaded-virtual -Wnon-virtual-dtor -Wno-missing-field-initializers
+
+override CXXFLAGS := $(filter-out -march=native -DTBB, $(CXXFLAGS))
+
+
+$(warning ========================= C Flags after are $(CFLAGS) ======================================== )
+$(warning ========================= CXX Flags after are $(CXXFLAGS) ======================================== )
 
 LDFLAGS += $(PLATFORM_LDFLAGS)
 

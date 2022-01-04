@@ -9,6 +9,11 @@
 //
 #pragma once
 
+// We don't need compression libraries. I'm compiling without them until I figure out how to include them without breaking.
+#undef BZIP2
+#undef LZ4
+#undef ZSTD
+
 #include <algorithm>
 #include <limits>
 #ifdef ROCKSDB_MALLOC_USABLE_SIZE
