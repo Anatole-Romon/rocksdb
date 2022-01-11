@@ -492,8 +492,9 @@ $(warning ========================= C Flags before are $(CFLAGS) ===============
 $(warning ========================= CXX Flags before are $(CXXFLAGS) ======================================== )
 
 CFLAGS += $(C_WARNING_FLAGS) $(WARNING_FLAGS) -I. -I./include $(PLATFORM_CCFLAGS) $(OPT)
-override CXXFLAGS += $(WARNING_FLAGS) -I. -I./include $(PLATFORM_CXXFLAGS) $(OPT) -Woverloaded-virtual -Wnon-virtual-dtor -Wno-missing-field-initializers
+override CXXFLAGS += $(WARNING_FLAGS) -I. -I./include $(PLATFORM_CXXFLAGS) $(OPT) -Wnon-virtual-dtor -Wno-missing-field-initializers
 
+override CFLAGS := $(filter-out -march=native, $(CFLAGS))
 override CXXFLAGS := $(filter-out -march=native -DTBB, $(CXXFLAGS))
 
 
