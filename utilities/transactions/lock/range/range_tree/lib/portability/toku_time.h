@@ -137,6 +137,10 @@ static inline tokutime_t toku_time_now(void) {
   uint64_t result;
   asm volatile("stckf %0" : "=Q"(result) : : "cc");
   return result;
+#elif defined(__kv3__)
+  timespec result;
+  clock_gettime(CLOCK_MONOTONIC_RAW, &result);
+  return (result.tv_sec * 1000000) + result.tv_nsec;
 #else
 #error No timer implementation for this platform
 #endif

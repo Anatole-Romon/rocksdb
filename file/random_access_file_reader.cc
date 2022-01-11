@@ -27,6 +27,12 @@ inline void IOStatsAddBytesByTemperature(Temperature file_temperature,
   if (file_temperature == Temperature::kUnknown) {
     return;
   }
+
+  // this raises an error saying value is unused
+  // is that normal ?
+  // In any case, dirty fix for now
+  (void)(value);
+
   switch (file_temperature) {
     case Temperature::kHot:
       IOSTATS_ADD(file_io_stats_by_temperature.hot_file_bytes_read, value);
@@ -47,6 +53,10 @@ inline void IOStatsAddCountByTemperature(Temperature file_temperature,
   if (file_temperature == Temperature::kUnknown) {
     return;
   }
+
+  // same as above
+  (void)(value);
+
   switch (file_temperature) {
     case Temperature::kHot:
       IOSTATS_ADD(file_io_stats_by_temperature.hot_file_read_count, value);

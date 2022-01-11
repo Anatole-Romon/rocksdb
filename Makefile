@@ -482,6 +482,12 @@ ifeq ($(NO_THREEWAY_CRC32C), 1)
 	CXXFLAGS += -DNO_THREEWAY_CRC32C
 endif
 
+# Flags added for MPPA Linux compilation
+
+# The error message said to use these flags, so I did
+OPT += -DNPERF_CONTEXT -DNIOSTATS_CONTEXT
+
+
 $(warning ========================= C Flags before are $(CFLAGS) ======================================== )
 $(warning ========================= CXX Flags before are $(CXXFLAGS) ======================================== )
 
