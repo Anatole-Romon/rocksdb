@@ -231,19 +231,49 @@ endif
 AM_LINK = $(AM_V_CCLD)$(CXX) -L. $(patsubst lib%.a, -l%, $(patsubst lib%.$(PLATFORM_SHARED_EXT), -l%, $^)) $(EXEC_LDFLAGS) -o $@ $(LDFLAGS) $(COVERAGEFLAGS)
 AM_SHARE = $(AM_V_CCLD) $(CXX) $(PLATFORM_SHARED_LDFLAGS)$@ -L. $(patsubst lib%.$(PLATFORM_SHARED_EXT), -l%, $^) $(LDFLAGS) -o $@
 
-include $(SPDK_ROOT_DIR)/lib/rocksdb/spdk.rocksdb.mk
+# Add spdk libraries
 
-# This inclusion adds flags which break things. They need to be removed
-#
-# A -DNDEBUG flag is added to CXXFLAGS. We have to remove it if debug is on
-# A -Wstrict-prototypes is added to CFLAGS, which some of the C code does not respect
+SPDK_LIBS := -Wl,--start-group -Wl,--whole-archive
+# SPDK_LIBS += -lspdk_bdev_malloc -lspdk_bdev_null -lspdk_bdev_nvme -lspdk_bdev_lvol
+# SPDK_LIBS += -lspdk_bdev_raid -lspdk_bdev_split 
+# SPDK_LIBS += -lspdk_blob -lspdk_blob_bdev -lspdk_blobfs -lspdk_blobfs_bdev -lspdk_lvol
+# SPDK_LIBS += -lspdk_nvme -lspdk_event_bdev -lspdk_event_accel -lspdk_bdev
+# SPDK_LIBS += -lspdk_accel -lspdk_event -lspdk_trace -lspdk_log -lspdk_conf
+# SPDK_LIBS += -lspdk_thread -lspdk_util -lspdk_notify -lspdk_rpc
+# SPDK_LIBS += -lspdk_jsonrpc -lspdk_json
+# SPDK_LIBS += -lspdk_env_odp -lspdk_bdev_remote
+# SPDK_LIBS += -lspdk_shmem
+SPDK_LIBS += -lspdk_accel -lspdk_accel -lspdk_accel_ioat -lspdk_bdev -lspdk_bdev_aio -lspdk_bdev_delay -lspdk_bdev_error -lspdk_bdev_ftl \
+	-lspdk_bdev_gpt -lspdk_bdev_logdev -lspdk_bdev_lvol -lspdk_bdev_malloc -lspdk_bdev_null -lspdk_bdev_nvme -lspdk_bdev_passthru \
+	-lspdk_bdev_raid -lspdk_bdev_split -lspdk_bdev_virtio -lspdk_bdev_zone_block -lspdk_blob -lspdk_blob_bdev -lspdk_blobfs -lspdk_blobfs_bdev \
+	-lspdk_conf -lspdk_env_dpdk -lspdk_env_dpdk_rpc -lspdk_event -lspdk_event_accel -lspdk_event_bdev -lspdk_event_iscsi -lspdk_event_nbd \
+	-lspdk_event_net -lspdk_event_nvmf -lspdk_event_scsi -lspdk_event_sock -lspdk_event_vmd -lspdk_ftl -lspdk_ioat -lspdk_iscsi -lspdk_json \
+	-lspdk_jsonrpc -lspdk_log -lspdk_lvol -lspdk_nbd -lspdk_net -lspdk_notify -lspdk_nvme -lspdk_nvmf -lspdk_rdma -lspdk_rpc -lspdk_rpc_cluster \
+	-lspdk_scsi -lspdk_shmem -lspdk_sock -lspdk_sock_fp -lspdk_thread -lspdk_trace -lspdk_util -lspdk_ut_mock -lspdk_virtio -lspdk_vmd
+SPDK_LIBS += -lrte_eal -lrte_mempool -lrte_ring -lrte_mbuf -lrte_bus_pci -lrte_pci -lrte_mempool_ring
+SPDK_LIBS += -lisal
+SPDK_LIBS += -Wl,--no-whole-archive -Wl,--end-group
 
-ifneq ($(DEBUG_LEVEL),0)
-$(warning Debug enabled)
-CXXFLAGS := $(filter-out -DNDEBUG, $(CXXFLAGS))
-endif
+override LDFLAGS_FOR_BUILD += $(SPDK_LIBS)
 
-CFLAGS := $(filter-out -Wstrict-prototypes, $(CFLAGS))
+# override LDFLAGS += -libspdk_blobfs
+
+# CFLAGS += $(SPDK_LIBS)
+# CXXFLAGS += $(SPDK_LIBS)
+
+# include $(SPDK_ROOT_DIR)/lib/rocksdb/spdk.rocksdb.mk
+
+# # This inclusion adds flags which break things. They need to be removed
+
+# # A -DNDEBUG flag is added to CXXFLAGS. We have to remove it if debug is on
+# # A -Wstrict-prototypes is added to CFLAGS, which some of the C code does not respect
+
+# ifneq ($(DEBUG_LEVEL),0)
+# $(warning Debug enabled)
+# CXXFLAGS := $(filter-out -DNDEBUG, $(CXXFLAGS))
+# endif
+
+# CFLAGS := $(filter-out -Wstrict-prototypes, $(CFLAGS))
 
 # Detect what platform we're building on.
 # Export some common variables that might have been passed as Make variables
@@ -500,6 +530,8 @@ override CXXFLAGS := $(filter-out -march=native -DTBB, $(CXXFLAGS))
 
 $(warning ========================= C Flags after are $(CFLAGS) ======================================== )
 $(warning ========================= CXX Flags after are $(CXXFLAGS) ======================================== )
+
+$(warning ================== LD_LIBRARY_PATH is $(LD_LIBRARY_PATH) ===================)
 
 LDFLAGS += $(PLATFORM_LDFLAGS)
 
